@@ -9,10 +9,6 @@
   [s]
   (str/split s #":"))
 
-(defn join
-  [cp]
-  (str/join ":" cp))
-
 ;; TODO determine project type and handle other types of projects
 ;; lein classpath
 ;; boot with-cp -w -f -

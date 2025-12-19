@@ -37,9 +37,13 @@
   (when-not (kondo-installed?)
     (kondo-install))
 
-  (let [project-paths (cp/project-paths)]
+  (let [project-paths (cp/project-paths)
+        cmd (-> (concat ["clj-kondo" "--lint"] project-paths ["--parallel"])
+                vec)]
     (println "Linting paths:" (pr-str project-paths))
-    (eval `($? "clj-kondo" "--lint" ~@project-paths "--parallel"))))
+    ;; Kondo doesn't work from subdirectories of the project.
+    ;; TODO print a message if switching from the cwd to the project home.
+    (apply $? {:dir (loc/project-home)} cmd)))
 
 (defn ^:export lint
   []

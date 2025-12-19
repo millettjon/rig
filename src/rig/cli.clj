@@ -2,7 +2,7 @@
 
 (defn bb-proc?
   [x]
-  (= "babashka.process.Process" (-> x class .getName)))
+  (= "babashka.process.Process" (some-> x class .getName)))
 
 (defn result->code
   [result]
@@ -23,10 +23,11 @@
   [tool-sym & args]
   (let [fn-sym (symbol (str "rig.tool." (namespace tool-sym))
                        (name tool-sym))
-        f      (requiring-resolve fn-sym)]
-    (-> (apply f args)
-        result->code
-        System/exit)))
+        f      (requiring-resolve fn-sym)
+        code   (-> (apply f args) result->code)]
+    (or (zero? code)
+        (println (format "(exited with error code: %d)" code)))
+    (System/exit code)))
 
 (defn lint
   []
@@ -40,6 +41,10 @@
   []
   (invoke 'outdated/upgrade))
 
+(defn unused
+  []
+  (invoke 'unused/unused))
+
 (def HELP
   "RIG - Run a tool in a project.
 
@@ -47,10 +52,11 @@ USAGE
   rig <command>
 
 COMMANDS
-  help              display help
-  lint              lint source files
-  outdated          check for oudated dependencies
-  outdated:upgrade    upgrade outdated dependencies
+  help               display help
+  lint               lint source files
+  outdated           list oudated dependencies
+  outdated:upgrade   upgrade outdated dependencies
+  unused             find unused public vars
 ")
 
 (defn help
@@ -64,10 +70,11 @@ COMMANDS
       "lint"             (lint)
       "outdated"         (outdated)
       "outdated:upgrade" (outdated:upgrade)
+      "unused"           (unused)
 
       ;; else
       (help))))
 
-(defn main
+(defn ^:export main
   [& args]
   (dispatch args))

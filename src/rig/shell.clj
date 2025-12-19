@@ -19,8 +19,13 @@
 
 (defn $?
   [& args]
-  (-> (apply p/process {:inherit true} args)
-      deref))
+  (let [[opts args] (if (map? (first args))
+                      [(first args) (rest args)]
+                      [nil args])
+        opts (merge opts {:inherit true})]
+    #_(prn ::$? :opts opts :args args)
+    (-> (apply p/process opts args)
+        deref)))
 #_ ($? "evnx") ; NOTE throws since executable doesn't exist.
 
 (def $ p/shell)

@@ -1,2 +1,3 @@
 {:paths ["src"]
+ ;; NOTE This causes outdated to list all deps twice.
  :deps  {rig/rig {:local/root "."}}}
