@@ -1,4 +1,5 @@
-(ns rig.cli)
+(ns rig.cli
+  (:refer-clojure :exclude [test]))
 
 (defn bb-proc?
   [x]
@@ -41,6 +42,10 @@
   []
   (invoke 'outdated/upgrade))
 
+(defn test
+  [args]
+  (apply invoke 'test/run args))
+
 (defn unused
   []
   (invoke 'unused/unused))
@@ -56,6 +61,9 @@ COMMANDS
   lint               lint source files
   outdated           list oudated dependencies
   outdated:upgrade   upgrade outdated dependencies
+  test               run tests
+                       --help
+                       --watch
   unused             find unused public vars
 ")
 
@@ -65,11 +73,13 @@ COMMANDS
 
 (defn dispatch
   [args]
-  (let [command   (first args)]
+  (let [command (first args)
+        args'   (rest args)]
     (case command
       "lint"             (lint)
       "outdated"         (outdated)
       "outdated:upgrade" (outdated:upgrade)
+      "test"             (test args')
       "unused"           (unused)
 
       ;; else
