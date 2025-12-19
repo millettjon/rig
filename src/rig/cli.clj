@@ -1,19 +1,36 @@
 (ns rig.cli)
 
+(defn bb-proc?
+  [x]
+  (= "babashka.process.Process" (-> x class .getName)))
+
+(defn result->code
+  [result]
+  (cond
+    ;; When a literal exception, return 9.
+    (instance? Throwable result) 9
+
+    ;; When a bb process, return the exit code.
+    (bb-proc? result) (-> result deref :exit)
+
+    ;; When truthy return 0
+    (boolean result) 0
+
+    ;; Else non truthy result.
+    :else 1))
+
 (defn invoke
   [tool-sym & args]
   (let [fn-sym (symbol (str "rig.tool." (namespace tool-sym))
                        (name tool-sym))
         f      (requiring-resolve fn-sym)]
-    (apply f args)))
-;; how to handle return?
-;;   throw -> error
-;;   process get result exit code
-;;   int use as exit code
-;;   nil use 0
-;;   true use 0
-;;   exception use 1
-;;   anything else use 1
+    (-> (apply f args)
+        result->code
+        System/exit)))
+
+(defn lint
+  []
+  (invoke 'lint/lint))
 
 (defn outdated
   []
@@ -31,6 +48,7 @@ USAGE
 
 COMMANDS
   help              display help
+  lint              lint source files
   outdated          check for oudated dependencies
   outdated:upgrade    upgrade outdated dependencies
 ")
@@ -43,6 +61,7 @@ COMMANDS
   [args]
   (let [command   (first args)]
     (case command
+      "lint"             (lint)
       "outdated"         (outdated)
       "outdated:upgrade" (outdated:upgrade)
 
