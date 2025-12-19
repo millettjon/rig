@@ -1,0 +1,2 @@
+{:paths ["src"]
+ :deps  {rig/rig {:local/root "."}}}

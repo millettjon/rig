@@ -1,0 +1,23 @@
+#!/usr/bin/env bb
+;; -*- clojure -*-
+
+(ns rig
+  (:require
+   [babashka.fs   :as fs]
+   [babashka.deps :as deps]))
+
+;; Locate self and add self as dep.
+(let
+ [rig-home
+  (loop
+   [p (fs/canonicalize *file*)]
+   (if
+    (fs/exists? (fs/path p "deps.edn"))
+    (str p)
+    (recur (fs/parent p))))]
+
+  ;; NOTE This seems to require that a deps.edn exists.
+  (deps/add-deps {:deps {'rig/rig #:local{:root rig-home}}}))
+
+;; Run the cli fn.
+(apply (clojure.core/requiring-resolve (quote rig.cli/main)) *command-line-args*)
