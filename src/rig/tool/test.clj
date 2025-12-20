@@ -19,7 +19,7 @@
   (or (fs/exists? (config-file))
       (create-config-file))
 
-  (apply deps/clojure-main [:kaocha :log/no-op] "kaocha.runner" args))
+  (apply deps/clojure-main [:kaocha :no-log] "kaocha.runner" args))
 
 (defn ^:export run
   "Upgrade outdated dependencies."

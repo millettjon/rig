@@ -17,18 +17,26 @@
 ;; '$&    ; background
 ;; '$&>
 
-(defn $?
+(defn $&
   [& args]
   (let [[opts args] (if (map? (first args))
                       [(first args) (rest args)]
                       [nil args])
         opts (merge opts {:inherit true})]
     #_(prn ::$? :opts opts :args args)
-    (-> (apply p/process opts args)
-        deref)))
-#_ ($? "evnx") ; NOTE throws since executable doesn't exist.
+    (apply p/process opts args)))
 
-(def $ p/shell)
+(defn $?
+  [& args]
+  (-> (apply $& args)
+      deref))
+
+(defn $
+  [& args]
+  (-> (apply $? args)
+      p/check))
+
+#_(def $ p/shell)
 
 (defn $>
   [& args]

@@ -4,7 +4,7 @@
 
 (defn antq
   [& args]
-  (apply deps/clojure-main [:antq :log/no-op] "antq.core" args))
+  (apply deps/clojure-main [:antq :no-log] "antq.core" args))
 
 (defn ^:export outdated
   "Check for outdated dependencies."

@@ -6,7 +6,7 @@
 (defn- carve
   []
   (let [opts (pr-str {:paths (cp/project-paths) :report {:format :text}})]
-    (deps/clojure-main [:carve :log/no-op] "carve.main" "--opts" opts)))
+    (deps/clojure-main [:carve :no-log] "carve.main" "--opts" opts)))
 
 (defn ^:export unused
   "Check for outdated dependencies."

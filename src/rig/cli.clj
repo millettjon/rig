@@ -34,6 +34,14 @@
   []
   (invoke 'lint/lint))
 
+(defn nrepl
+  [args]
+  (invoke 'nrepl/nrepl args))
+
+(defn nrepl:bb
+  [args]
+  (invoke 'nrepl/bb-nrepl args))
+
 (defn outdated
   []
   (invoke 'outdated/outdated))
@@ -54,17 +62,18 @@
   "RIG - Run a tool in a project.
 
 USAGE
-  rig <command>
+  rig <command> [option ...]
 
 COMMANDS
-  help               display help
-  lint               lint source files
-  outdated           list oudated dependencies
-  outdated:upgrade   upgrade outdated dependencies
-  test               run tests
-                       --help
-                       --watch
-  unused             find unused public vars
+  help                                 display help
+  lint                                 lint source files
+  nrepl [cider] [portal] [reveal]      start clj nrepl server
+  nrepl:bb [portal]                    start bb nrepl server
+  outdated                             list oudated dependencies
+  outdated:upgrade                     upgrade outdated dependencies
+  test [--help] [--watch]              run tests
+  unused                               find unused public vars
+  zprint                               format source
 ")
 
 (defn help
@@ -77,6 +86,8 @@ COMMANDS
         args'   (rest args)]
     (case command
       "lint"             (lint)
+      "nrepl"            (nrepl args')
+      "nrepl:bb"         (nrepl:bb args')
       "outdated"         (outdated)
       "outdated:upgrade" (outdated:upgrade)
       "test"             (test args')
